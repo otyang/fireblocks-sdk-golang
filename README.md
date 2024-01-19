@@ -23,7 +23,7 @@ This SDK provides Golang bindings for interacting with the Fireblocks API, enabl
 ## Installation
 
 ```bash
-go get github.com/otyang/fireblocks
+go get github.com/otyang/fireblocks-sdk-golang.git
 ```
 
 ## Usage
