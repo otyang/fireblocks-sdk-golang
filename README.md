@@ -74,6 +74,17 @@ func main() {
 }
 ```
 
+## Running Tests
+
+To run tests on the endpoint, run the following command
+```bash
+  go test -v
+```
+
+Or use make command to run all test at a go
+```bash
+  make
+```
 
 ## Documentation
 
