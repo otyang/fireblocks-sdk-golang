@@ -41,21 +41,30 @@ import (
 
 2. **Create a Fireblocks client:**
 
-```go
-client, err := client.New(clientID, clientSecret, apiKey, apiEndpoint)
+```go 
+fireblocks, err := New(client.ConfigApiKey,  client.ConfigPrivateKey, client.ConfigBaseURL, true)
 ```
 
 Usage:
 ```go
  
 func main() {
-    client := fireblocks.New(apiKey, privateKey, baseURL)
-    vaultService := vault.New(client)
+    client.ConfigApiKey = "api-key"
+    client.ConfigPrivateKey = "private-key"
+    client.ConfigBaseURL = "https://sandbox-api.fireblocks.io"
+    client.ConfigDebugMode =  true
+
+    fireblocks, err := New(client.ConfigApiKey,  client.ConfigPrivateKey, client.ConfigBaseURL, client.ConfigDebugMode) 
+    if err != nil {
+        return err
+    }
 
     // Create a vault account
-    vaultAccount, err := client.Vault.CreateVaultAccount(context.Background(), vault.CreateVaultParams{
-        Name: "My Vault",
-    })
+	vault, err := fireblocks.Vault.FindVaultAccountByID(context.Background(), "1")
+    if err != nil {
+        return err
+    }
+    // .....
 
     feeResponse, err := client.Transaction.EstimateFeeForSendingToExternalAddress(
         ctx context.Context, assetID, amount, treatAsGrossAmount,
@@ -65,11 +74,6 @@ func main() {
 }
 ```
 
-
-
-## Examples
-
-See the `examples` directory for complete code examples.
 
 ## Documentation
 

@@ -1,5 +1,7 @@
 package client
 
+var ConfigDebugMode = true
+
 var ConfigApiKey = "593cbdef-fe45-4775-a3a7-8f947b0ea7c1"
 
 var ConfigBaseURL = "https://sandbox-api.fireblocks.io"

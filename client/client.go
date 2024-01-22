@@ -1,35 +1,43 @@
 package client
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
-	"github.com/dghubble/sling"
+	"github.com/go-resty/resty/v2"
 )
 
 // Client represents a client for interacting with an API
 type Client struct {
-	slingClient *sling.Sling // Sling client for making requests
-	apiKey      string       // API key for authentication
-	privateKey  string       // Private key for signing JWT tokens
+	restyClient *resty.Client
+	apiKey      string // API key for authentication
+	privateKey  string // Private key for signing JWT tokens
+	debugMode   bool
 }
 
-func New(apiKey, privateKey, baseURL string, httpClient *http.Client) *Client {
-	s := sling.
-		New().
-		Client(httpClient).
-		Base(baseURL).
-		Set("X-API-Key", apiKey).
-		Set("Accept", "application/json").
-		Set("Content-Type", "application/json")
+// New creates a new Client instance, configuring the base URL, headers, and API token.
+func New(apiKey, privateKey, baseURL string, debugMode bool) *Client {
+	// Create a new Resty client with the specified configurations.
+	clnt := resty.New().
+		SetBaseURL(baseURL).
+		SetHeader("X-API-Key", apiKey).
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json")
 
-	return &Client{slingClient: s, apiKey: apiKey, privateKey: privateKey}
+	// Return a Client instance using the configured Resty client.
+	return &Client{
+		restyClient: clnt,
+		apiKey:      apiKey,
+		privateKey:  privateKey,
+		debugMode:   debugMode,
+	}
 }
 
-// MakeRequest makes an API request with the specified method, path, and body
-func (x *Client) MakeRequest(method string, path string, body any, apiSuccess any) (*http.Response, error) {
+// MakeRequest makes an API request with the specified method, path, and body.
+// It handles different HTTP methods (GET, POST, PUT, DELETE) and potential errors.
+func (x *Client) MakeRequest(ctx context.Context, method string, path string, body any, apiSuccess any) (*resty.Response, error) {
 	jsonBody, err := jsonify(body)
 	if err != nil {
 		return nil, err
@@ -46,22 +54,28 @@ func (x *Client) MakeRequest(method string, path string, body any, apiSuccess an
 	}
 
 	// Create a new Sling client with the Authorization header set
-	sClient := x.slingClient.Set("Authorization", fmt.Sprintf("Bearer %v", token)).New()
+	// Create a request object with debug mode enabled.
+	rClient := x.restyClient.
+		SetHeader("Authorization", fmt.Sprintf("Bearer %v", token)).
+		SetDebug(x.debugMode).R()
 
+	// Variables to store errors and responses.
 	var (
 		apiError     APIError
-		httpResponse *http.Response
+		httpResponse *resty.Response
 	)
 
+	// Perform the appropriate request based on the HTTP method.
 	switch strings.ToUpper(method) {
 	case "DELETE":
-		httpResponse, err = sClient.Delete(path).Receive(apiSuccess, &apiError)
+		httpResponse, err = rClient.SetContext(ctx).ForceContentType("application/json; charset=utf-8").
+			SetBody(body).SetResult(apiSuccess).SetError(&apiError).Delete(path)
 	case "GET":
-		httpResponse, err = sClient.Get(path).Receive(apiSuccess, &apiError)
+		httpResponse, err = rClient.SetContext(ctx).SetBody(body).SetResult(apiSuccess).SetError(&apiError).Get(path)
 	case "POST":
-		httpResponse, err = sClient.Post(path).Receive(apiSuccess, &apiError)
+		httpResponse, err = rClient.SetContext(ctx).SetBody(body).SetResult(apiSuccess).SetError(&apiError).Post(path)
 	case "PUT":
-		httpResponse, err = sClient.Put(path).Receive(apiSuccess, &apiError)
+		httpResponse, err = rClient.SetContext(ctx).SetBody(body).SetResult(apiSuccess).SetError(&apiError).Put(path)
 	default:
 		httpResponse, err = nil, errors.New("undefined method")
 	}

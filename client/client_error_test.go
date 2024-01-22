@@ -8,6 +8,8 @@ import (
 )
 
 func TestAPIError_Error(t *testing.T) {
+	t.Parallel()
+
 	ae := APIError{
 		ErrorCode: 10001, Message: "Invalid input data",
 	}
@@ -17,6 +19,8 @@ func TestAPIError_Error(t *testing.T) {
 }
 
 func TestAPIError_Empty(t *testing.T) {
+	t.Parallel()
+
 	AE := APIError{}
 	assert.True(t, AE.Empty())
 
@@ -25,6 +29,8 @@ func TestAPIError_Empty(t *testing.T) {
 }
 
 func TestHandleError(t *testing.T) {
+	t.Parallel()
+
 	httpError := fmt.Errorf("HTTP request failed")
 	apiError := APIError{ErrorCode: 10001, Message: "Server error"}
 

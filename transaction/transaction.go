@@ -24,7 +24,7 @@ func (v *TransactionService) EstimateFeeForSendingToExternalAddress(
 ) (*EstimateFeeResponse, error) {
 	var (
 		path       = "/v1/vault/accounts"
-		apiSuccess *EstimateFeeResponse
+		apiSuccess EstimateFeeResponse
 	)
 
 	params := EstimateFeeParams{
@@ -44,12 +44,12 @@ func (v *TransactionService) EstimateFeeForSendingToExternalAddress(
 		TreatAsGrossAmount: treatAsGrossAmount,
 	}
 
-	_, err := v.client.MakeRequest("post", path, params, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "post", path, params, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // Returns a transaction by ID.
@@ -57,15 +57,15 @@ func (v *TransactionService) EstimateFeeForSendingToExternalAddress(
 func (v *TransactionService) FindByFireblocksTransactionId(ctx context.Context, txID string) (*TransactionResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/transactions/%s", txID)
-		apiSuccess *TransactionResponse
+		apiSuccess TransactionResponse
 	)
 
-	_, err := v.client.MakeRequest("get", path, nil, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "get", path, nil, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // Returns transaction by external transaction ID.
@@ -73,15 +73,15 @@ func (v *TransactionService) FindByFireblocksTransactionId(ctx context.Context, 
 func (v *TransactionService) FindByExternalTransactionId(ctx context.Context, txID string) (*TransactionResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/transactions/external_tx_id/%s", txID)
-		apiSuccess *TransactionResponse
+		apiSuccess TransactionResponse
 	)
 
-	_, err := v.client.MakeRequest("get", path, nil, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "get", path, nil, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // Creates a new transaction.
@@ -89,13 +89,13 @@ func (v *TransactionService) FindByExternalTransactionId(ctx context.Context, tx
 func (v *TransactionService) CreateTransaction(ctx context.Context, p CreateTransactionParams) (*CreateTxnResponse, error) {
 	var (
 		path       = "/v1/transactions"
-		apiSuccess *CreateTxnResponse
+		apiSuccess CreateTxnResponse
 	)
 
-	_, err := v.client.MakeRequest("post", path, p, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "post", path, p, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }

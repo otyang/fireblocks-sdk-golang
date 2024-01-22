@@ -28,7 +28,7 @@ func (w *WebHookService) ResendFailedWebhook(ctx context.Context) error {
 		apiSuccess *ResendFailedWebhookResponse
 	)
 
-	_, err := w.client.MakeRequest("post", path, nil, apiSuccess)
+	_, err := w.client.MakeRequest(ctx, "post", path, nil, apiSuccess)
 	return err
 }
 
@@ -39,10 +39,10 @@ func (w *WebHookService) ResendFailedWebhookByTransactionID(
 ) (*ResendFailedWebhookResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/webhooks/resend/%s", txnID)
-		apiSuccess *ResendFailedWebhookResponse
+		apiSuccess ResendFailedWebhookResponse
 	)
 
-	_, err := w.client.MakeRequest("post", path, nil, apiSuccess)
+	_, err := w.client.MakeRequest(ctx, "post", path, nil, &apiSuccess)
 	return nil, err
 }
 

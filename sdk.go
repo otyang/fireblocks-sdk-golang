@@ -19,8 +19,8 @@ type SDK struct {
 	Custom      *custom.CustomFlowSVC
 }
 
-func New(apiKey, privateKey, baseURL string) (*SDK, error) {
-	client := client.New(apiKey, privateKey, baseURL, nil)
+func New(apiKey, privateKey, baseURL string, debugMode bool) (*SDK, error) {
+	client := client.New(apiKey, privateKey, baseURL, debugMode)
 
 	vaultSvc := vault.New(client)
 	txnSvc := transaction.New(client)

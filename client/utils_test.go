@@ -8,6 +8,8 @@ import (
 )
 
 func TestHashBody(t *testing.T) {
+	t.Parallel()
+
 	testcases := []struct {
 		name     string
 		input    string
@@ -27,12 +29,16 @@ func TestHashBody(t *testing.T) {
 }
 
 func TestParsePrivateKey(t *testing.T) {
+	t.Parallel()
+
 	prvtKey, err := ParsePrivateKey(ConfigPrivateKey)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, prvtKey)
 }
 
 func TestJsonify(t *testing.T) {
+	t.Parallel()
+
 	// Test cases
 	tests := []struct {
 		name     string
@@ -57,6 +63,8 @@ func TestJsonify(t *testing.T) {
 }
 
 func TestCreateAndSignJWTToken(t *testing.T) {
+	t.Parallel()
+
 	testData := []struct {
 		name     string
 		uri      string

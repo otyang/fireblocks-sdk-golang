@@ -24,7 +24,7 @@ func New(client *client.Client) *VaultService {
 func (v *VaultService) CreateVaultAccount(ctx context.Context, params CreateVaultParams) (*VaultAccountResponse, error) {
 	var (
 		path       = "/v1/vault/accounts"
-		apiSuccess *VaultAccountResponse
+		apiSuccess VaultAccountResponse
 	)
 
 	if strings.TrimSpace(params.Name) == "" {
@@ -38,12 +38,12 @@ func (v *VaultService) CreateVaultAccount(ctx context.Context, params CreateVaul
 		CustomerRefID: params.CustomerRefID,
 	}
 
-	_, err := v.client.MakeRequest("post", path, p, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "post", path, p, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // Creates a wallet for a specific asset in a vault account.
@@ -51,15 +51,15 @@ func (v *VaultService) CreateVaultAccount(ctx context.Context, params CreateVaul
 func (v *VaultService) CreateAssetWallet(ctx context.Context, vaultAccountID, assetID string) (*CreateAssetResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/vault/accounts/%s/%s", vaultAccountID, assetID)
-		apiSuccess *CreateAssetResponse
+		apiSuccess CreateAssetResponse
 	)
 
-	_, err := v.client.MakeRequest("post", path, nil, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "post", path, nil, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // CreateAssetAddress Creates a wallet for a specific asset in a vault account.
@@ -67,15 +67,15 @@ func (v *VaultService) CreateAssetWallet(ctx context.Context, vaultAccountID, as
 func (v *VaultService) CreateAssetAddress(ctx context.Context, vaultAccountID, assetID string) (*CreateAddressResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/vault/accounts/%s/%s/addresses", vaultAccountID, assetID)
-		apiSuccess *CreateAddressResponse
+		apiSuccess CreateAddressResponse
 	)
 
-	_, err := v.client.MakeRequest("post", path, nil, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "post", path, nil, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
 
 // Returns the requested vault account.
@@ -83,13 +83,13 @@ func (v *VaultService) CreateAssetAddress(ctx context.Context, vaultAccountID, a
 func (v *VaultService) FindVaultAccountByID(ctx context.Context, vaultAccountID string) (*VaultAccountResponse, error) {
 	var (
 		path       = fmt.Sprintf("/v1/vault/accounts/%s", vaultAccountID)
-		apiSuccess *VaultAccountResponse
+		apiSuccess VaultAccountResponse
 	)
 
-	_, err := v.client.MakeRequest("get", path, nil, apiSuccess)
+	_, err := v.client.MakeRequest(ctx, "get", path, nil, &apiSuccess)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiSuccess, nil
+	return &apiSuccess, nil
 }
