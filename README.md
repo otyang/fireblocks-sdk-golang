@@ -1,6 +1,6 @@
 # Fireblocks SDK in Go (golang)
 
-This SDK provides Golang bindings for interacting with the Fireblocks API, enabling you to manage vault accounts, transactions, webhooks, and more. This isnt meant to be a full sdk, but a streeamlined one with only function needed at this point
+This SDK provides Golang bindings for interacting with blockchains through Fireblocks, enabling you to manage vault accounts, transactions, webhooks, and more. This isnt meant to be a full sdk, but a streamlined one with only function needed at this point
 
 
 ## Available Actions at this point 
