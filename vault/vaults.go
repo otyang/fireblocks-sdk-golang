@@ -93,3 +93,54 @@ func (v *VaultService) FindVaultAccountByID(ctx context.Context, vaultAccountID 
 
 	return &apiSuccess, nil
 }
+
+// https://developers.fireblocks.com/reference/get_vault-accounts-paged
+func (v *VaultService) ListVaults(ctx context.Context, params ListVaultsParams) (*ListVaultsResponse, error) {
+	var (
+		path       = "/v1/vault/accounts_paged"
+		apiSuccess ListVaultsResponse
+	)
+
+	var qp []string
+	if params.Limit < 1 {
+		params.Limit = 1
+	}
+
+	if params.Limit > 500 {
+		params.Limit = 500
+	}
+	qp = append(qp, fmt.Sprintf("limit=%v", params.Limit))
+
+	if params.NamePrefix != "" {
+		qp = append(qp, fmt.Sprintf("namePrefix=%s", params.NamePrefix))
+	}
+	if params.NameSuffix != "" {
+		qp = append(qp, fmt.Sprintf("nameSuffix=%s", params.NameSuffix))
+	}
+	if params.MinAmountThreshold != 0 {
+		qp = append(qp, fmt.Sprintf("minAmountThreshold=%v", params.MinAmountThreshold))
+	}
+	if params.AssetId != "" {
+		qp = append(qp, fmt.Sprintf("assetId=%s", params.AssetId))
+	}
+	if params.OrderBy != "" {
+		qp = append(qp, fmt.Sprintf("orderBy=%s", params.OrderBy))
+	}
+	if params.Before != "" {
+		qp = append(qp, params.Before)
+	}
+	if params.After != "" {
+		qp = append(qp, params.After)
+	}
+
+	if len(qp) > 0 {
+		path = fmt.Sprintf("%s?%s", path, strings.Join(qp, "&"))
+	}
+
+	_, err := v.client.MakeRequest(ctx, "GET", path, nil, &apiSuccess)
+	if err != nil {
+		return nil, err
+	}
+
+	return &apiSuccess, nil
+}
