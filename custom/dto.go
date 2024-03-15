@@ -10,6 +10,10 @@ type CreateAddressResponse struct {
 }
 
 type SendToExternalAddress struct {
+
+	// SourceVaultID is the ID of the vault account to send funds from.
+	SourceVaultID string
+
 	// Destination specifies a one-time address of the intended recipient of the funds.
 	DestinationAddress string
 
@@ -25,10 +29,10 @@ type SendToExternalAddress struct {
 	// Defines the blockchain fee level which will be paid for the
 	// transaction (only for Ethereum and UTXO-based blockchains).
 	// Set to MEDIUM by default. Valid values are ("LOW", "MEDIUM", "HIGH").
-	FeeLevel string `json:"feeLevel"` // *
+	FeeLevel string `json:"feeLevel,omitempty"` // *
 
 	// Fee is the estimated transaction fee, in the asset's smallest unit (Satoshi, Latoshi, etc)
-	Fee string `json:"fee"` // *
+	// Fee string `json:"fee,omitempty"` // *
 
 	// FailOnLowFee specifies whether the transaction should fail
 	// if the estimated fee is too low. to avoid getting stuck with no confirmation
@@ -41,6 +45,9 @@ type SendToExternalAddress struct {
 	// due to Internet interruptions, but the transaction was actually sent and processed.
 	// the unique identifier of the transaction outside of Fireblocks
 	ExternalTxID string `json:"externalTxId"`
+
+	// CustomerRefID is an optional reference ID provided by the customer.
+	CustomerRefID string `json:"customerRefId"`
 
 	// Optional message attached to the transaction. Not sent to the blockchain.
 	// Just used to describe the transaction at your Fireblocks workspace.
